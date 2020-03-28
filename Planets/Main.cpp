@@ -1,5 +1,11 @@
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
 #include <Windows.h>
-#include <GL\freeglut.h>
+//#include <GL/freeglut.h>
 #include <iostream>
 
 #include <math.h>
@@ -119,10 +125,10 @@ void Menu()
 	cout << " ---=== Controls ===---\n";
 	cout << " Ruch kamery: klawisze strzalek\n";
 	cout << " Change detail: [-]/[+]\n";
-	cout << " Change scale: [S]/[L]\n";
-	cout << " Change orbit distance: [N]/[F]\n";
-	cout << " Restore values: [R]\n";
-	cout << " Exit: [E]\n\n";
+	cout << " Change scale: [s]/[l]\n";
+	cout << " Change orbit distance: [n]/[f]\n";
+	cout << " Restore values: [r]\n";
+	cout << " Exit: [e]\n\n";
 
 	cout << " Scale: " << scale << endl;
 	cout << " Orbit distance: " << orbitDistance << endl;
@@ -189,8 +195,8 @@ void Key(unsigned char key, int x, int y)
 			cout << "\n ---=== Zakonczono prace z programem ===---\n";
 			exit(0);
 		}
-	default:
-		break;
+		default:
+			break;
 	}
 
 	Menu();
@@ -250,15 +256,12 @@ int main(int argc, char* argv[]) {
 	glutInitWindowPosition(300, 150);
 
 	glutCreateWindow("Planets assigment - Jakub Spalek Lab1 Gr1 INF II");
-	//glEnable()
+	
 	glutReshapeFunc(ChangeViewPort);
 	glutDisplayFunc(Render);
 	glutIdleFunc(Idle);
 	glutKeyboardFunc(Key);
 	glutSpecialFunc(SpecialKey);
-
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
