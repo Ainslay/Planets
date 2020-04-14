@@ -16,20 +16,20 @@ int slices = 32;
 int stacks = 32;
 
 GLdouble scale = 1.0f;
-GLdouble orbitDistance = 0.0f;
+GLdouble orbitDistance = 1.0f;
 
-GLfloat PI = 3.14f;
-GLfloat alpha = -PI / 2.0;
-GLfloat jumpPoint = 1.0f;
-GLfloat jumpEye = 1.0f;
+GLdouble PI = 3.14f;
+GLdouble alpha = -PI / 2.0;
+GLdouble jumpPoint = 1.0f;
+GLdouble jumpEye = 1.0f;
 
-GLfloat eyeX = 0;
-GLfloat eyeY = 0;
-GLfloat eyeZ = 0;
+GLdouble eyeX = 0;
+GLdouble eyeY = 0;
+GLdouble eyeZ = 20;
 
-GLfloat pointX = jumpPoint * cos(alpha);
-GLfloat pointY = 0.0f;
-GLfloat pointZ = jumpPoint * sin(alpha);
+GLdouble pointX = jumpPoint * cos(alpha);
+GLdouble pointY = 0.0f;
+GLdouble pointZ = jumpPoint * sin(alpha);
 
 void ChangeViewPort(int width, int height)
 {
@@ -38,7 +38,7 @@ void ChangeViewPort(int width, int height)
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-aspectRatio, aspectRatio, -1.0, 1.0, 2.0, 100.0);
+	glFrustum(-1.0 * aspectRatio, 1.0 * aspectRatio, -1.0, 1.0, 2.0, 400.0);
 }
 
 void Render()
@@ -47,72 +47,69 @@ void Render()
 	const double angle = time * 60.0;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
 
 	// The Sun
 	glPushMatrix();
 		gluLookAt(eyeX, eyeY, eyeZ, pointX, pointY, pointZ, 0.0, 1.0, 0.0);
+		glMatrixMode(GL_MODELVIEW);
+
+		glLoadIdentity();
 
 		glColor3d(0.98, 0.73, 0.05);
 		glTranslated(0, 0, -20);
-		glRotated(angle, 0, 1, 0);
-		glutSolidSphere(1.5 * scale, slices, stacks);
+		glRotated(angle * 0.3, 0, 0, 1);
+		glutSolidSphere(3.0 * scale, slices, stacks);
+
 		// The Earth
-		glPushMatrix();
-			glColor3d(0.05, 0.3, 0.97);
-			glTranslated(0, 0, 4 + orbitDistance);
-			glRotated(23.44, 1, 0, 0);
-			glutSolidSphere(0.3 * scale , slices, stacks);
+		glColor3d(0.05, 0.3, 0.97);
+		glTranslated(8 * orbitDistance * cos(time) * 1.5, 8 * orbitDistance * sin(time), 0);
+		glRotated(angle, 0, 0, 1);
+		glutSolidSphere(0.3 * scale, slices, stacks);
 			
 			// The Moon
-			glPushMatrix();
-				glColor3d(0.5, 0.5, 0.5);
-				glTranslated(0, 0, 0.5 * scale);
-				glRotated(0, 1, 0, 0);
-				glutSolidSphere(0.1 * scale, slices, stacks);
-			glPopMatrix();
+			glColor3d(0.5, 0.5, 0.5);
+			glTranslated(1 * orbitDistance * cos(time), 1 * orbitDistance * sin(time), 0);
+			glRotated(time, 0, 0, 1);
+			glutSolidSphere(0.1 * scale, slices, stacks);
 
-		glPopMatrix();
+		glLoadIdentity();
+		glTranslated(0, 0, -20);
 
-		// Jupiter
-		glPushMatrix();
-			glColor3d(0.7, 0.4, 0.08);
-			glTranslated(0, 0, 8 + orbitDistance);
-			glRotated(6.09, 1, 0, 0);
-			glutSolidSphere(0.7 * scale, slices, stacks);
+	// Jupiter
+		glColor3d(0.7, 0.4, 0.08);
+		glTranslated(14 * orbitDistance * cos(time/3) * 2.0, 14 * orbitDistance * sin(time / 3), 0);
+		glRotated(angle * 0.5, 0, 0, 1);
+		glutSolidSphere(0.7 * scale, slices, stacks);
 			
-			glPushMatrix();
-				glColor3d(0.5, 0.5, 0.5);
-				glTranslated(0, 0.5, 1.2 * scale);
-				glRotated(0, 1, 0, 0);
-				glutSolidSphere(0.2 * scale, slices, stacks);
-			glPopMatrix();
+			// First moon
+			glColor3d(0.5, 0.5, 0.5);
+			glTranslated(1.5 * orbitDistance * cos(time), 1.5 * orbitDistance * sin(time), 0);
+			glRotated(time, 1, 0, 0);
+			glutSolidSphere(0.2 * scale, slices, stacks);
 
-			glPushMatrix();
-				glColor3d(0.5, 0.5, 0.5);
-				glTranslated(0, -0.5, -0.7 * scale);
-				glRotated(0, 1, 0, 0);
-				glutSolidSphere(0.1 * scale, slices, stacks);
-			glPopMatrix();
+			// Second moon
+			glColor3d(0.5, 0.5, 0.5);
+			glTranslated(2 * orbitDistance * cos(time / 2), 2 * orbitDistance * sin(time / 2), 0);
+			glRotated(time, 1, 0, 0);
+			glutSolidSphere(0.1 * scale, slices, stacks);
 		
-		glPopMatrix();
+		glLoadIdentity();
+		glTranslated(0, 0, -20);
 
 		// Saturn
+		glColor3d(0.7, 0.6, 0.4);
+		glTranslated(22 * orbitDistance * cos(time / 5) * 1.5, 22 * orbitDistance * sin(time / 5), 0);
+		glRotated(angle * 0.4, 0, 0, 1);
+		glutSolidSphere(0.45 * scale, slices, stacks);
+
 		glPushMatrix();
-			glColor3d(0.7, 0.6, 0.4);
-			glTranslated(0, 0, 12 + orbitDistance);
-			glRotated(63, 1, 0, 0);
-			glutSolidSphere(0.45 * scale, slices, stacks);
-
-			glPushMatrix();
-				glColor3d(0.7, 0.7, 0.7);
-				glScalef(1, 1, 0.1);
-				glutSolidTorus(0.15 * scale, 1.0 * scale, slices, stacks);
-				glColor3d(0.6, 0.6, 0.6);
-				glutSolidTorus(0.05 * scale, 1.30 * scale, slices, stacks);
-			glPopMatrix();
-
+			glColor3d(0.7, 0.7, 0.7);
+			glScalef(1, 1, 0.1);
+			glutSolidTorus(0.15 * scale, 1.0 * scale, slices, stacks);
+			glColor3d(0.6, 0.6, 0.6);
+			glutSolidTorus(0.05 * scale, 1.30 * scale, slices, stacks);
 		glPopMatrix();
+
 
 	glPopMatrix();
 
@@ -171,10 +168,10 @@ void Key(unsigned char key, int x, int y)
 		} break;
 		case 'n':
 		{
-			if (orbitDistance >= -3.0)
+			if (orbitDistance >= 1.0)
 				orbitDistance -= 0.1;
-			if (orbitDistance < -3.0)
-				orbitDistance = -3.0;
+			if (orbitDistance < 1.0)
+				orbitDistance = 1.0;
 		} break;
 		case 'f':
 		{
@@ -186,7 +183,7 @@ void Key(unsigned char key, int x, int y)
 		case 'r':
 		{
 			scale = 1.0;
-			orbitDistance = 0.0;
+			orbitDistance = 1.0;
 			stacks = 32;
 			slices = 32;
 		} break;
